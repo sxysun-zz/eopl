@@ -121,5 +121,29 @@
             (occurs-free? search-var (app-exp->rator exp))
             (occurs-free? search-var (app-exp->rand exp)))))))
 
-;;; but we can do bette by using automated interface generation tool
+;; parser and un-parser
+; WARNING: code below is just pasted from others, not working
+(define parse-expression
+    (lambda (datum)
+      (cond
+        ((symbol? datum) (var-exp datum))
+        ((pair? datum)
+         (if (eqv? (car datum) 'lambda)
+           (lambda-exp
+             (car (cadr datum))
+             (parse-expression (caddr datum)))
+           (app-exp
+             (parse-expression (car datum))
+             (parse-expression (cadr datum)))))
+        (else (report-invalid-concrete-syntax datum)))))
 
+(define unparse-lc-exp
+    (lambda (exp)
+      (cases lc-exp exp
+        (var-exp (var) var)
+        (lambda-exp (bound-var body) 
+          (list 'lambda (list bound-var)
+            (unparse-lc-exp body)))
+        (app-exp (rator rand)
+          (list 
+            (unparse-lc-exp rator) (unparse-lc-exp rand))))))
