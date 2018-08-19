@@ -2,6 +2,14 @@
 #lang racket
 ; Types -> safe evaluation, certain types will be inhibited
 
+;;;;; Hindley-Milner Type checking -> ad hoc polymorphism
+; but has constraints:
+; 1. example like `define ident x = x` will fail in 
+;  `define f x y = (ident x, ident y)` because HM assumes every a name
+;  always has same type
+; 2. unification problem -> cannot do `define f g = g f` for its 
+;  re-currence, the equation is recursive
+
 ; Type ::= int | bool | Type -> Type
 
 ;;;; for functions use optional types like in 
